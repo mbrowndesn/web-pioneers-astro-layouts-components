@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+/* Tailwind's reset zeroes paragraph margins; bring back the browser default
+   so multi-paragraph bios get space between paragraphs. Utilities such as
+   mt-2 still override this. */
+@layer base {
+	p {
+		margin-block: 1em;
+	}
+}
+
+/* Rich text from the Markdoc bios (the profile page wraps it in .bio).
+   Tailwind's reset strips heading sizes, list bullets and link colors. */
+@layer components {
+	.bio > :first-child {
+		margin-top: 0;
+	}
+	.bio h2 {
+		@apply mt-10 mb-3 text-2xl font-bold;
+	}
+	.bio h3 {
+		@apply mt-8 mb-2 text-xl font-semibold;
+	}
+	.bio ul {
+		@apply my-4 list-disc pl-6;
+	}
+	.bio li + li {
+		@apply mt-1;
+	}
+	.bio a {
+		@apply text-blue-600 underline;
+	}
+}

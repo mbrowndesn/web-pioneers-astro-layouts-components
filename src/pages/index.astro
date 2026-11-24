@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PersonCard from '../components/PersonCard.astro';
+import { getSortedPioneers } from '../lib/pioneers';
+import { SITE_TITLE } from '../consts';
+
+const pioneers = await getSortedPioneers();
+---
+
+<BaseLayout title={SITE_TITLE}>
+	<div class="max-w-5xl mx-auto p-6">
+		<h1 class="text-4xl font-bold mb-8 text-center">{SITE_TITLE}</h1>
+
+		<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			{pioneers.map(({ id, data }) => (
+				<PersonCard
+					name={data.title}
+					image={data.image.replace(/^\//, '')}
+					intro={data.intro}
+					href={`pioneers/${id}.html`}
+				/>
+			))}
+		</div>
+	</div>
+</BaseLayout>

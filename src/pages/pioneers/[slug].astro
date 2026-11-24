@@ -1,0 +1,41 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+	const pioneers = await getCollection('pioneers');
+	return pioneers.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { title, intro, image, homepage } = entry.data;
+const { Content } = await render(entry);
+
+// Show the homepage URL without its protocol, "www." or trailing slash
+const url = new URL(homepage);
+const homepageText = (url.hostname.replace(/^www\./, '') + url.pathname).replace(/\/$/, '');
+---
+
+<BaseLayout title={title}>
+	<article class="max-w-3xl mx-auto p-6">
+		<!-- Paths are relative (this page is one folder deep) so they work from disk too -->
+		<a class="text-blue-600 underline" href="../index.html">&larr; All pioneers</a>
+
+		<img
+			class="mt-6 w-full aspect-[4/3] object-cover object-top rounded-lg shadow"
+			src={`..${image.startsWith('/') ? '' : '/'}${image}`}
+			alt={title}
+		/>
+
+		<h1 class="mt-6 text-4xl font-bold">{title}</h1>
+		<p class="mt-2 text-xl text-gray-600">{intro}</p>
+
+		<div class="bio mt-6 text-lg leading-relaxed">
+			<Content />
+		</div>
+
+		<p class="mt-6">
+			<a class="text-blue-600 underline" href={homepage}>{homepageText}</a>
+		</p>
+	</article>
+</BaseLayout>

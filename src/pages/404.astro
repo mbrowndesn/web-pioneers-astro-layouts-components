@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PersonCard from '../components/PersonCard.astro';
+import { getSortedPioneers } from '../lib/pioneers';
+import { SITE_TITLE } from '../consts';
+
+const pioneers = await getSortedPioneers();
+---
+
+<!--
+	This page is served for missing URLs at any depth (e.g. /pioneers/nobody/here),
+	so links and images use root-relative paths instead of the relative ones used elsewhere.
+-->
+<BaseLayout title="Page Not Found">
+	<div class="max-w-5xl mx-auto p-6">
+		
+		<h1 class="text-4xl font-bold text-center mb-16">404: Helpful Web Pages</h1>
+
+		<div class="grid gap-6 sm:grid-cols-2">
+			<article class="bg-white rounded-lg shadow p-4">
+				<h2 class="text-xl font-semibold">Not Found</h2>
+				<p class="mt-2 text-sm">
+					The requested URL <code class="break-all" data-missing-path>/this-page</code> was not found on this server.
+				</p>
+			</article>
+
+			<article class="bg-white rounded-lg shadow p-4">
+				<h2 class="text-xl font-semibold">Did you know?</h2>
+				<p class="mt-2 text-sm">
+					"404" is an HTTP status code. HTTP is the protocol Tim Berners-Lee designed at CERN so
+					browsers and servers could talk to each other. Codes in the 400s mean something was
+					wrong with the request, and 404 means the server couldn't find what was asked for.
+				</p>
+			</article>
+		</div>
+
+		<h2 class="mt-12 mb-8 text-2xl font-bold text-center">Looking for a pioneer?</h2>
+
+		<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			{pioneers.map(({ id, data }) => (
+				<PersonCard
+					name={data.title}
+					image={`/${data.image.replace(/^\//, '')}`}
+					intro={data.intro}
+					href={`/pioneers/${id}.html`}
+				/>
+			))}
+		</div>
+
+		<p class="mt-8 text-center">
+			<a class="text-blue-600 underline" href="/">Back to all {SITE_TITLE}</a>
+		</p>
+	</div>
+</BaseLayout>
+
+<script is:inline>
+	// Show the address the visitor actually tried
+	document.querySelectorAll('[data-missing-path]').forEach((el) => {
+		el.textContent = location.pathname;
+	});
+</script>
